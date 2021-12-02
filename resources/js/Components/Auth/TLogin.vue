@@ -34,6 +34,12 @@
 
         <!--Form-->
         <div class="auth-form">
+          <div class="flex justify-center w-full -my-2">
+            <t-badge color="solid-yellow">
+              <t-information-icon class="w-5 h-5" slot="icon"/>
+              The demo resets in every day
+            </t-badge>
+          </div>
           <form @submit.prevent="submit">
             <!--Email-->
             <div>
@@ -138,10 +144,14 @@ import TInputGroup from "@/Components/Form/TInputGroup";
 import TInputText from "@/Components/Form/Inputs/TInputText";
 import { Link } from "@inertiajs/inertia-vue3";
 import windowSizeCalculator from "@/Functions/windowSizeCalculator";
+import TBadge from "@/Components/Badge/TBadge";
+import TInformationIcon from "@/Components/Icon/TInformationIcon";
 
 export default defineComponent({
   name: "TLogin",
   components: {
+    TInformationIcon,
+    TBadge,
     TAlert,
     TBellIcon,
     TButton,
