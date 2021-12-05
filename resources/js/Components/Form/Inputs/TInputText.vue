@@ -1,14 +1,10 @@
 <template>
   <!--Container-->
-  <div
-      class="text-input"
-      ref="withSelectInput"
-      :class="[errors.length>0 ? `border border-red-500 radius-${radius}`: '']"
-  >
-    <!--Outside Icon-->
+  <div class="text-input" ref="withSelectInput">
+    <!--Icon-->
     <div
-        v-if="hasSlot('icon') && iconType==='outside'"
-        class="text-input-outside-icon"
+        v-if="hasSlot('icon')"
+        class="text-input-icon"
         :class="`radius-l-${radius}`"
     >
       <slot name="icon"/>
@@ -18,34 +14,31 @@
         v-if="prepend || hasSlot('prepend')"
         class="text-input-prepend"
         :class="[
-                selectPosition==='left' && options[0][optionsValueKey] ? 'border-r' : '',
-                hasSlot('icon') && iconType==='outside' ? '' : `border-l radius-l-${radius}`
-                ]"
+        selectPosition==='left' && options[0].key ? 'border-r' : '',
+        hasSlot('icon') ? '' : `border-l radius-l-${radius}`]"
     >
       <span v-if="prepend" v-text="prepend"/>
       <slot v-else name="prepend"></slot>
     </div>
     <!--Left Select-->
     <div
-        v-if="options[0][optionsValueKey] && selectPosition==='left'"
-        @click="disabled || readOnly==='select' || readOnly==='both' ? '' : showSelectList = !showSelectList"
+        v-if="options[0].key && selectPosition==='left'"
+        @click="showSelectList = !showSelectList"
         class="text-input-select-container"
     >
       <!--Select Trigger-->
       <div
           class="text-input-select-trigger"
           :class="[
-                    hasSlot('prepend') || prepend ? '' : `border-l radius-l-${radius}`,
-                    disabled || readOnly==='select' || readOnly==='both' ? 'cursor-not-allowed' : 'cursor-pointer',
-                    {'input-disabled' : disabled}
-                    ]"
+          hasSlot('prepend') || prepend ? '' : `border-l radius-l-${radius}`,
+          ]"
       >
         <!--Clear Icon-->
         <svg
             @click.stop="$emit('update:selectValue', null)"
-            v-if="selectValue && !disabled && readOnly!=='select' && readOnly!=='both'"
+            v-if="selectValue"
             xmlns="http://www.w3.org/2000/svg"
-            class="input-clear-icon"
+            class="text-input-clear-icon"
             :class="selectPosition==='left' ? 'mr-1' : ''"
             fill="none"
             viewBox="0 0 24 24"
@@ -86,16 +79,16 @@
         <div
             v-if="selectType==='outside'"
             class="text-input-selected-indicator"
-            :class="selectValue ? 'bg-green-500' : 'bg-gray-500 dark:bg-gray-700'"
+            :class="selectValue ? 'bg-green-500' : 'bg-gray-500'"
         />
       </div>
       <!--Select List-->
       <div v-if="showSelectList"
            class="text-input-select-list-container"
            :class="[
-                     `radius-${radius}`,
-                     selectPosition==='left' ? 'left-0' : 'right-0'
-                     ]"
+             `radius-${radius}`,
+             selectPosition==='left' ? 'left-0' : 'right-0'
+             ]"
       >
         <template v-for="item in options">
           <div
@@ -121,53 +114,38 @@
       </div>
 
     </div>
-    <!--Input-->
-    <div class="flex flex-grow">
-      <!--Inside Icon-->
-      <div
-          v-if="hasSlot('icon') && iconType==='inside'"
-          class="text-input-inside-icon"
-      >
-        <slot name="icon"/>
-      </div>
-      <!--Input Field-->
-      <input
-          class="input text-input"
-          :class="[
-                    inputStyle,
-                    {'pl-10':iconType === 'inside'},
-                    {'input-disabled' : disabled}
-                    ]"
-          :type="type"
-          :id="id"
-          :placeholder="placeholder"
-          :value="disabled ? '' : modelValue"
-          :disabled="disabled || readOnly==='text' || readOnly==='both'"
-          @input="$emit('update:modelValue', $event.target.value)"
-          ref="input"
-      >
-    </div>
+    <!--Input Field-->
+    <input
+        class="input text-input"
+        :class="inputStyle"
+        :type="type"
+        :id="id"
+        :placeholder="placeholder"
+        :value="modelValue"
+        :disabled="disabled"
+        @input="$emit('update:modelValue', $event.target.value)"
+        ref="input"
+    >
     <!--Right Select-->
     <div
-        v-if="options[0][optionsValueKey] && selectPosition==='right'"
-        @click="disabled || readOnly==='select' || readOnly==='both' ? '' : showSelectList = !showSelectList"
+        v-if="options[0].key && selectPosition==='right'"
+        @click="showSelectList = !showSelectList"
         class="text-input-select-container"
+
     >
       <!--Select Trigger-->
       <div
           class="text-input-select-trigger"
           :class="[
-                    hasSlot('append') || append ? '' : `border-r radius-r-${radius}`,
-                    disabled || readOnly==='select' || readOnly==='both' ? 'cursor-not-allowed' : 'cursor-pointer',
-                    {'input-disabled' : disabled}
-                    ]"
+          hasSlot('append') || append ? '' : `border-r radius-r-${radius}`,
+          ]"
       >
         <!--Clear Icon-->
         <svg
             @click.stop="$emit('update:selectValue', null)"
-            v-if="selectValue && !disabled && readOnly!=='select' && readOnly!=='both'"
+            v-if="selectValue"
             xmlns="http://www.w3.org/2000/svg"
-            class="input-clear-icon"
+            class="text-input-clear-icon"
             :class="selectPosition==='right' ? 'ml-1' : ''"
             fill="none"
             viewBox="0 0 24 24"
@@ -181,6 +159,7 @@
         </svg>
         <!--Selected Item-->
         <span
+            class="pl-1"
             v-if="selectValue && selectType==='inside'"
             v-text="options.find(o=>o[optionsValueKey] === selectValue)[optionsLabelKey]"
         />
@@ -188,11 +167,11 @@
         <svg
             class="w-5 h-5 transform"
             :class="[
-                        !showSelectList ? 'rotate-0' : '',
-                        (showSelectList && selectPosition==='left' && selectType !== 'inside') ? '-rotate-90' : '',
-                        (showSelectList && selectPosition==='right') || (showSelectList &&selectType === 'inside') ? 'rotate-90' : '',
-                        'transition-size-short'
-                        ]"
+            !showSelectList ? 'rotate-0' : '',
+            (showSelectList && selectPosition==='left' && selectType !== 'inside') ? '-rotate-90' : '',
+            (showSelectList && selectPosition==='right') || (showSelectList &&selectType === 'inside') ? 'rotate-90' : '',
+            'transition-size-short'
+            ]"
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24" stroke="currentColor"
@@ -215,9 +194,9 @@
       <div v-if="showSelectList"
            class="text-input-select-list-container"
            :class="[
-                     `radius-${radius}`,
-                     selectPosition==='left' ? 'left-0' : 'right-0'
-                     ]"
+             `radius-${radius}`,
+             selectPosition==='left' ? 'left-0' : 'right-0'
+             ]"
       >
         <template v-for="item in options">
           <div
@@ -248,7 +227,7 @@
         class="text-input-append"
         :class="[
         `radius-r-${radius}`,
-        selectPosition==='right' && options[0][optionsValueKey] ? 'border-l' : ``
+        selectPosition==='right' && options[0].key ? 'border-l' : ``
         ]"
     >
       <span v-if="append" v-text="append"/>
@@ -258,7 +237,7 @@
 </template>
 
 <script>
-import {computed, defineComponent, inject, reactive, ref, toRefs} from "vue";
+import {computed, defineComponent, reactive, ref, toRefs} from "vue";
 import {onClickOutside} from "@vueuse/core";
 
 export default defineComponent({
@@ -302,10 +281,6 @@ export default defineComponent({
       type: String,
       default: ""
     },
-    iconType: {
-      type: String,
-      default: "outside"
-    },
     options: {
       type: [Object, Array],
       default() {
@@ -331,8 +306,8 @@ export default defineComponent({
       default: false
     },
     readOnly: {
-      type: String,
-      default: ''
+      type: Boolean,
+      default: false
     },
     clearButton: {
       type: Boolean,
@@ -342,13 +317,10 @@ export default defineComponent({
   emits: ["update:modelValue", "update:selectValue"],
   setup(props, {slots}) {
     /*Definitions*/
-    const {radius, prepend, append, iconType, options, optionsValueKey, selectPosition} = toRefs(props);
+    const {radius, prepend, append, options, optionsValueKey, selectPosition} = toRefs(props);
     const input = ref(null);
     const withSelectInput = ref(null);
     const showSelectList = ref(false);
-
-    /*Get Error Status*/
-    const errors = inject('errors', []);
 
     /*Outside click for select*/
     onClickOutside(withSelectInput, () => showSelectList.value = false);
@@ -361,30 +333,22 @@ export default defineComponent({
     /*Generating Style Classes*/
     const inputStyle = computed(() => {
       let radiusStyle;
-      let leftSideHasItem, rightSideHasItem;
 
-      /*Check Left Side Has Item*/
-      if (prepend.value || hasSlot("prepend") || selectPosition.value === "left" || (hasSlot('icon') && iconType.value === 'outside')) {
-        leftSideHasItem = true
-      }
-
-      /*Check Right Side Has Item*/
-      if (append.value || hasSlot("append") || selectPosition.value === "right") {
-        rightSideHasItem = true
-      }
-
-      /*Left Full and Right Empty*/
-      if (leftSideHasItem && !rightSideHasItem) {
+      if (
+          (prepend.value || hasSlot("prepend") || hasSlot("icon") || selectPosition.value === "left") &&
+          (!append.value && !hasSlot("append") && selectPosition.value !== "right")
+      ) {
+        /*Left Full and Right Empty*/
         radiusStyle = "radius-r-" + radius.value;
-      }
 
-      /*Left Empty Right Full*/
-      if (!leftSideHasItem && rightSideHasItem) {
+      } else if (
+          (!prepend.value && !hasSlot("prepend") && !hasSlot("icon") && selectPosition.value !== "left") &&
+          (append.value || hasSlot("append") || selectPosition.value === "right")
+      ) {
+        /*Left Empty Right Full*/
         radiusStyle = "radius-l-" + radius.value;
-      }
-
-      /*Both Empty*/
-      if (!leftSideHasItem && !rightSideHasItem) {
+      } else if (!prepend.value && !hasSlot("prepend") && !hasSlot("icon") && !append.value && !hasSlot("append") && selectPosition.value === "") {
+        /*Both Empty*/
         radiusStyle = "radius-" + radius.value;
       }
 
@@ -394,7 +358,7 @@ export default defineComponent({
     /*Slot Check*/
     const hasSlot = name => !!slots[name];
 
-    return {input, withSelectInput, inputStyle, showSelectList, errors, focus, hasSlot};
+    return {input, withSelectInput, inputStyle, showSelectList, focus, hasSlot};
   }
 });
 </script>
