@@ -3,8 +3,8 @@ export const leftMenu = {
     return {
       leftMenuLinks: [
         {
-          label: "Buy Anemon Now!",
-          icon: "shopping-basket",
+          label: "Access Source Code",
+          icon: "heart",
           link: "https://github.com/sponsors/sinan-aydogan",
           type: "external"
         },
