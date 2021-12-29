@@ -3,9 +3,9 @@ export const leftMenu = {
     return {
       leftMenuLinks: [
         {
-          label: "Github Repo",
-          icon: "code",
-          link: "https://github.com/sinan-aydogan/tailadmin-laravel",
+          label: "Buy Anemon Now!",
+          icon: "shopping-basket",
+          link: "https://github.com/sponsors/sinan-aydogan",
           type: "external"
         },
         {
