@@ -6,17 +6,19 @@
         :radius="5"
         :status="status"
         bg-image="/img/samples/bgFakurianDesign-nY14Fs8pxT8-unsplash-compressed.jpg"
-        login-button-color="pink"
+        login-button-color="purple"
         register-button-design="link-plus"
         register-button-color="purple"
-        color="gradient-purple-to-pink"
+        color="solid-purple"
     >
         <!--Logo-->
         <template #logo>
             <Link href="/">
-                <div class="flex flex-col justify-center items-center w-full">
-                    <t-logo class="w-12 h-12"/>
-                    <span class="text-3xl">TailAdmin</span>
+                <div class="flex flex-col space-x-2 items-center max-w-min py-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                    </svg>
+                    <span class="text-5xl mt-1">Anemon</span>
                 </div>
             </Link>
         </template>

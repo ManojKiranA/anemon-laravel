@@ -35,8 +35,10 @@
         <!--Form-->
         <div class="auth-form">
           <div class="flex justify-center w-full -my-2">
-            <t-badge color="solid-yellow">
-              <t-information-icon class="w-5 h-5" slot="icon"/>
+            <t-badge color="yellow">
+                <template #icon>
+                    <t-information-icon class="w-5 h-5"/>
+                </template>
               The demo resets in every day
             </t-badge>
           </div>
@@ -203,8 +205,8 @@ export default defineComponent({
   data() {
     return {
       form: this.$inertia.form({
-        email: "",
-        password: "",
+        email: "admin@tailadmin.dev",
+        password: "admin",
         remember: false
       })
     };
