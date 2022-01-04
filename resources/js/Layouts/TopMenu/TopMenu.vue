@@ -81,6 +81,8 @@
     </div>
     <!--Notifications-->
     <top-menu-notification />
+      <!--Theme Selector-->
+      <top-menu-theme-selector/>
     <!--User Menu-->
     <top-menu-user-menu />
   </div>
@@ -98,14 +100,15 @@
 </template>
 
 <script>
-import TopMenuNotification from "@/Layouts/TopMenuNotification";
-import TopMenuUserMenu from "@/Layouts/TopMenuUserMenu";
+import TopMenuNotification from "@/Layouts/TopMenu/TopMenuNotification";
+import TopMenuUserMenu from "@/Layouts/TopMenu/TopMenuUserMenu";
 import { defineComponent, inject, ref } from "vue";
 import TLoading from "@/Components/Loading/TLoading";
+import TopMenuThemeSelector from "@/Layouts/TopMenu/TopMenuThemeSelector";
 
 export default defineComponent({
   name: "TopMenu",
-  components: { TLoading, TopMenuUserMenu, TopMenuNotification },
+  components: {TopMenuThemeSelector, TLoading, TopMenuUserMenu, TopMenuNotification },
   emits: ["foldLeftMenu"],
   setup() {
     /*Definitions*/

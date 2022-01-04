@@ -33,38 +33,38 @@
         <template #default>
             <div class="dropdown-container">
                 <!-- Account Management -->
-                <div class="dropdown-header" v-t="'topMenu.userMenu.manageAccount'"/>
+                <div class="dropdown-header" v-text="tm('manageAccount')"/>
 
                 <!--Profile-->
                 <Link :href="route('profile.show')">
-                    <div class="dropdown-item" v-t="'topMenu.userMenu.profile'"/>
+                    <div class="dropdown-item" v-text="tm('profile')"/>
                 </Link>
 
                 <!--API Tokens-->
                 <Link v-if="$page.props.jetstream.hasApiFeatures"
                       :href="route('api-tokens.index')">
-                    <div class="dropdown-item" v-t="'topMenu.userMenu.api'"/>
+                    <div class="dropdown-item" v-text="tm('api')"/>
                 </Link>
 
                 <!-- Team Management -->
                 <template v-if="$page.props.jetstream.hasTeamFeatures">
                     <div class="dropdown-item-separator"/>
-                    <div class="dropdown-header" v-t="'topMenu.userMenu.manageTeam'"/>
+                    <div class="dropdown-header" v-text="tm('manageTeam')"/>
 
                     <!-- Team Settings -->
                     <Link :href="route('teams.show', $page.props.user.current_team)">
-                        <div class="dropdown-item" v-t="'topMenu.userMenu.teamSettings'"/>
+                        <div class="dropdown-item" v-text="tm('teamSettings')"/>
                     </Link>
 
                     <!--Create New Team-->
                     <Link v-if="$page.props.jetstream.canCreateTeams"
                           :href="route('teams.create')">
-                        <div class="dropdown-item" v-t="'topMenu.userMenu.createNewTeam'"/>
+                        <div class="dropdown-item" v-text="tm('createNewTeam')"/>
                     </Link>
 
                     <!-- Team Switcher -->
                     <div class="dropdown-item-separator"/>
-                    <div class="dropdown-header" v-t="'topMenu.userMenu.switchTeams'"/>
+                    <div class="dropdown-header" v-text="tm('switchTeams')"/>
 
                     <template v-for="team in $page.props.user.all_teams" :key="team.id">
                         <form @submit.prevent="switchToTeam(team)">
@@ -176,7 +176,7 @@
                         <transition name="darkModeTitle">
               <span
                   v-show="showDarkModeTitle===mode"
-                  v-t="'topMenu.userMenu.'+ mode"
+                  v-text="tm('mode')"
                   class="theme-changer-button-text"
               />
                         </transition>
@@ -187,7 +187,7 @@
                 <div class="dropdown-item-separator"/>
                 <span class="logout-button" @click="logout">
                         <!--Logout Text-->
-                        <span v-t="'topMenu.userMenu.logout'"/>
+                        <span v-text="tm('logout')"/>
                     <!--Logout Icon-->
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -214,14 +214,20 @@
 </template>
 
 <script>
+/*Main Funtions*/
 import {defineComponent, inject, onBeforeMount, ref, watch} from "vue";
 import {Link} from "@inertiajs/inertia-vue3";
+import {Inertia} from "@inertiajs/inertia";
+
+/*Components*/
 import TDropdown from "@/Components/Dropdown/TDropdown";
 import TAvatar from "@/Components/Avatar/TAvatar";
-import {Inertia} from "@inertiajs/inertia";
-import {useI18n} from "vue-i18n";
-import {useDebounce} from "@vueuse/core";
 import TLoading from "@/Components/Loading/TLoading";
+
+/*Multi Language*/
+import {useI18n} from "vue-i18n";
+import { userMenuTranslates} from "@/Lang/languages";
+import langChooserFn from "@/Functions/langChooser";
 
 export default defineComponent({
     name: "TopMenuUserMenu",
@@ -229,7 +235,13 @@ export default defineComponent({
     setup() {
         /*Definitions*/
         const conf = inject("conf");
-        const showLoadingScreen = ref(false);
+
+        /*Multi Language*/
+        const { changeLang, locale, loadingTranslations } = langChooserFn();
+        const {tm} = useI18n({
+            inheritLocale: true,
+            messages: userMenuTranslates,
+        });
 
         /*Switch Team Action*/
         const showTeamSelector = ref(false);
@@ -243,26 +255,6 @@ export default defineComponent({
                 });
         };
 
-        /*Language Selector*/
-        const {locale} = useI18n({
-            useScope: "global",
-            missingWarn: false,
-            warnHtmlMessage: false,
-            fallbackWarn: false
-        });
-        onBeforeMount(() => {
-            if (localStorage.lang) {
-                locale.value = localStorage.lang;
-            }
-        });
-        const changeLang = (key) => {
-            locale.value = key;
-            localStorage.setItem("lang", key);
-            Inertia.visit(route().current(), {
-                onStart: () => showLoadingScreen.value = true,
-                preserveScroll: true
-            });
-        };
 
         /*Dark Mode*/
         const darkMode = ref("auto");
@@ -332,14 +324,17 @@ export default defineComponent({
 
         return {
             conf,
+            logout,
+            switchToTeam,
             showTeamSelector,
-            locale,
+            /*Dark Mode*/
             darkMode,
             showDarkModeTitle,
-            showLoadingScreen,
+            loadingTranslations,
+            /*Multi Language*/
+            locale,
+            tm,
             changeLang,
-            switchToTeam,
-            logout
         };
     }
 });
